@@ -26,4 +26,9 @@
   grid-template-rows: repeat(auto-fit, 1fr);
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
 }
