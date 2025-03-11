@@ -4,7 +4,7 @@
   display: grid;
   grid:
     "header" auto
-    "main imagesection" auto
+    "main" auto
     "footer" auto
     / 1fr;
   gap: 8px;
