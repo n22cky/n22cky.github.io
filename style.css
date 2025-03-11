@@ -20,7 +20,7 @@
 .footer { grid-area: footer; }
 .imagesection { grid-area: imagesection; }
 
-.imagesection {
+.imageflex {
   width: 100%;
 
   display: flex;
