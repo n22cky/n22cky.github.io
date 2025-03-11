@@ -4,7 +4,7 @@
   display: grid;
   grid:
     "header" 20px
-    "main" 600px
+    "main images" 50px
     "footer" 20px
     / 1fr;
   gap: 20px;
@@ -18,6 +18,7 @@
 .header { grid-area: header; }
 .main { grid-area: main; }
 .footer { grid-area: footer; }
+.imagegrid { grid-area: imagegrid; }
 
 .imagegrid {
   width: 100%;
@@ -26,6 +27,8 @@
   gap: 16px;
   flex-wrap: wrap;
 
-  justify-content: space-evenly;
+  justify-content: space-between;
+  align-content: space-evenly;
+  justify-items: center;
   align-items: center;
 }
