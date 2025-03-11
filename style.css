@@ -22,9 +22,8 @@
 .imageflex {
   width: 100%;
 
-  display: flex;
-  gap: 16px;
-
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-rows: repeat(auto-fit, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
