@@ -20,7 +20,7 @@
 .footer { grid-area: footer; }
 
 .imageflex {
-  width: 100%;
+  width: 50%;
 
   display: grid;
   grid-template-rows: repeat(auto-fit, 1fr);
