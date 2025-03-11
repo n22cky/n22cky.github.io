@@ -3,11 +3,11 @@
 
   display: grid;
   grid:
-    "header" 20px
+    "header" auto
     "main imagesection" auto
-    "footer" 20px
+    "footer" auto
     / 1fr;
-  gap: 20px;
+  gap: 8px;
 
   justify-content: space-between;
   align-content: space-evenly;
@@ -25,4 +25,7 @@
 
   display: flex;
   gap: 16px;
+
+  justify-content: center;
+  align-items: center;
 }
