@@ -18,3 +18,14 @@
 .header { grid-area: header; }
 .main { grid-area: main; }
 .footer { grid-area: footer; }
+
+.imagegrid {
+  width: 100%;
+
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  justify-content: space-evenly;
+  align-items: center;
+}
