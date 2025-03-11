@@ -3,19 +3,14 @@
 
   display: grid;
   grid:
-    "header" 1
+    "header" 10px
     "main" 1fr
-    "footer" 1
+    "footer" 10px
     / 1fr;
   gap: 8px;
 
-  justify-content: center;
-  align-content: center;
   justify-items: center;
-  align-items: center;
-  
-  margin-right:auto;
-  margin-left:auto;
+
 }
 
 .header { grid-area: header; }
