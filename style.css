@@ -9,10 +9,8 @@
     / 1fr;
   gap: 8px;
 
-  justify-content: space-evenly;
-  align-content: space-evenly;
-  justify-items: center;
-  align-items: center;
+  margin-right:auto;
+  margin-left:auto;
 }
 
 .header { grid-area: header; }
