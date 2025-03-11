@@ -8,6 +8,11 @@
     "footer" auto
     / 1fr;
   gap: 8px;
+
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
   
   margin-right:auto;
   margin-left:auto;
