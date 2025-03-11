@@ -4,7 +4,7 @@
   display: grid;
   grid:
     "header" auto
-    "main" auto
+    "main" 150px
     "footer" auto
     / 1fr;
   gap: 8px;
@@ -28,6 +28,6 @@
   gap: 8px;
   grid-auto-flow: row dense;
 
-  justify-content: space-evenly;
-  align-content: space-evenly;
+  justify-content: center;
+  align-content: center;
 }
