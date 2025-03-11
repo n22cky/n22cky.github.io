@@ -8,6 +8,11 @@
     "footer" 20px
     / 1fr;
   gap: 20px;
+
+   justify-content: space-evenly;
+  align-content: space-evenly;
+  justify-items: center;
+  align-items: center;
 }
 
 .header { grid-area: header; }
