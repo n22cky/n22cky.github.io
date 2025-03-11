@@ -31,4 +31,7 @@
   align-content: center;
   justify-items: center;
   align-items: center;
+
+  margin-right:auto;
+  margin-left:auto;
 }
