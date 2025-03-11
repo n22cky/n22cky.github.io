@@ -3,11 +3,11 @@
 
   display: grid;
   grid:
-    "header" 240px
-    "main" auto
-    "footer" 240px
+    "header" 20px
+    "main" 600px
+    "footer" 20px
     / 1fr;
-  gap: 8px;
+  gap: 20px;
 }
 
 .header { grid-area: header; }
