@@ -38,3 +38,17 @@
   margin-right:auto;
   margin-left:auto;
 }
+
+
+.roboto-bodyfont {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 150;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+* {
+    font: Verdana, Roboto, 'sans-serif' !important;/* <-- fonts */
+}
