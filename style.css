@@ -50,5 +50,6 @@
 }
 
 html * {
-    font: Roboto, 'sans-serif' !important;/* <-- fonts */
+   color: #000 !important;
+   font-family: Roboto !important;
 }
