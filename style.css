@@ -49,6 +49,6 @@
     "wdth" 100;
 }
 
-* {
-    font: Verdana, Roboto, 'sans-serif' !important;/* <-- fonts */
+html * {
+    font: Roboto, 'sans-serif' !important;/* <-- fonts */
 }
