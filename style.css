@@ -43,6 +43,10 @@
 .topnav {
   background-color: #FFFFFF;
   overflow: hidden;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
 }
 
 /* Style the links inside the navigation bar */
@@ -54,6 +58,10 @@
   padding: 14px 20px;
   text-decoration: none;
   font-size: 15px;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
 }
 
 /* Change the color of links on hover */
