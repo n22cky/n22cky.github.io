@@ -3,11 +3,11 @@
 
   display: grid;
   grid:
-    "header" 70px
+    "header" 100px
     "main" 1fr
     "footer" 70px
     / 1fr;
-  gap: 8px;
+  gap: 20px;
 
   justify-content: center;
   align-content: center;
