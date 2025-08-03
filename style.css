@@ -5,7 +5,7 @@
   grid:
     "header" 100px
     "main" 1fr
-    "footer" 70px
+    "footer" 100px
     / 1fr;
   gap: 20px;
 
