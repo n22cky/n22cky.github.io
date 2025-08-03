@@ -22,6 +22,26 @@
 .main { grid-area: main; }
 .footer { grid-area: footer; }
 
+.banner {
+  width: 100%;
+
+  display: grid;
+  grid:
+    "header" 20px
+    "main" 1fr
+    "footer" 20px
+    / 1fr;
+  gap: 8px;
+
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
+
+  margin-right:auto;
+  margin-left:auto;
+}
+
 .imageflex {
   width: 100%;
 
