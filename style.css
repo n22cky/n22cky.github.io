@@ -3,9 +3,9 @@
 
   display: grid;
   grid:
-    "header" 100px
+    "header" 50px
     "main" 1fr
-    "footer" 100px
+    "footer" 50px
     / 1fr;
   gap: 20px;
 
