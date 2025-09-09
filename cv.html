@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Coordinate System with Clickable Point</title>
     <style>
         body { margin: 0; }
@@ -11,78 +10,48 @@
 </head>
 <body>
 
+<!-- Import THREE.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-// Set up the scene, camera, and renderer
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+    // === SETUP SCENE, CAMERA, RENDERER ===
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    );
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-// Create a 3D axis helper
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
+    // === ADD AXES HELPER ===
+    const axesHelper = new THREE.AxesHelper(10);
+    scene.add(axesHelper);
 
-// Function to create a random point in 3D space
-function createRandomPoint() {
-    const geometry = new THREE.SphereGeometry(0.1, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const sphere = new THREE.Mesh(geometry, material);
+    // === ADD RANDOM POINT ===
+    const pointGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+    const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const point = new THREE.Mesh(pointGeometry, pointMaterial);
 
-    // Random coordinates between -5 and 5 for X, Y, Z
-    sphere.position.set(
+    // Random position between -5 and 5
+    point.position.set(
         Math.random() * 10 - 5,
         Math.random() * 10 - 5,
         Math.random() * 10 - 5
     );
+    point.userData = { info: "📍 You clicked the random point!" };
 
-    scene.add(sphere);
+    scene.add(point);
 
-    // Add click interaction
-    sphere.userData = { id: 'randomPoint', info: 'This is a random point in the 3D space!' };
+    // === CAMERA POSITION ===
+    camera.position.z = 10;
 
-    return sphere;
-}
+    // === RAYCASTING SETUP ===
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
-// Create a random point
-const randomPoint = createRandomPoint();
-
-// Raycaster to detect clicks on 3D objects
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-// Handle mouse click event
-function onMouseClick(event) {
-    // Normalize mouse position to [-1, 1] range
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Update raycaster with mouse position and camera view
-    raycaster.update(camera, renderer.domElement);
-
-    // Check for intersections with the random point
-    const intersects = raycaster.intersectObject(randomPoint);
-    if (intersects.length > 0) {
-        alert(randomPoint.userData.info); // Show pop-up with sample text
-    }
-}
-
-// Add event listener for mouse click
-window.addEventListener('click', onMouseClick, false);
-
-// Set camera position
-camera.position.z = 5;
-
-// Render the scene
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-}
-animate();
-
-</script>
-
-</body>
-</html>
+    // === CLICK HANDLER ===
+    function onClick(event) {
+        // Convert screen coordinates to normalized device coordinates (-1 to +1)
