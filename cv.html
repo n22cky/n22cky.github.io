@@ -3,82 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>3D Coordinate Graph</title>
+  <title>3D Coordinate System with Clickable Point</title>
   <style>
-    body { margin: 0; overflow: hidden; }
+    body { margin: 0; }
     canvas { display: block; }
   </style>
 </head>
 <body>
 
-<!-- Include latest Three.js from official CDN -->
-<script type="module">
-  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
-  import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/controls/OrbitControls.js';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  // Scene setup
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+<script>
+// Scene, camera, and renderer setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
+  75, window.innerWidth / window.innerHeight, 0.1, 1000
+);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-  // Add axis helper
-  const axesHelper = new THREE.AxesHelper(10);
-  scene.add(axesHelper);
+// Axes helper (XYZ lines)
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
 
-  // Orbit Controls (for drag, zoom, rotate)
-  const controls = new OrbitControls(camera, renderer.domElement);
+// Function to create a clickable random point
+function createRandomPoint() {
+  const geometry = new THREE.SphereGeometry(0.1, 32, 32);
+  const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const sphere = new THREE.Mesh(geometry, material);
 
-  // Create a random point
-  const pointGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-  const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-  const point = new THREE.Mesh(pointGeometry, pointMaterial);
-  point.position.set(
+  sphere.position.set(
     Math.random() * 10 - 5,
     Math.random() * 10 - 5,
     Math.random() * 10 - 5
   );
-  point.userData.info = "You clicked the random point!";
-  scene.add(point);
 
-  // Position camera
-  camera.position.set(5, 5, 10);
-  controls.update();
+  sphere.userData = { info: 'This is a random point in the 3D space!' };
+  scene.add(sphere);
+  return sphere;
+}
 
-  // Raycaster for clicks
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
+// Create one random point
+const randomPoint = createRandomPoint();
 
-  // Click event
-  function onClick(event) {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
+// Raycaster and mouse vector
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 
-    const intersects = raycaster.intersectObject(point);
-    if (intersects.length > 0) {
-      alert(intersects[0].object.userData.info);
-    }
+// Handle mouse click
+function onMouseClick(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(randomPoint);
+
+  if (intersects.length > 0) {
+    alert(intersects[0].object.userData.info);
   }
+}
 
-  window.addEventListener('click', onClick, false);
+window.addEventListener('click', onMouseClick, false);
 
-  // Handle resize
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+// Set camera position
+camera.position.z = 5;
 
-  // Animation loop
-  function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-  }
-  animate();
-
+// Render loop
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
 </script>
 
 </body>
