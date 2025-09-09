@@ -3,55 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>3D Coordinate System with Clickable Point</title>
+  <title>3D Graph with Modal Pop-up</title>
   <style>
-    body { margin: 0; }
-    canvas { display: block; }
+    body {
+      margin: 0;
+      background-color: white; /* White background /
+    }
+    canvas {
+      display: block;
+    }
+
+    / Modal styles /
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); / Dimmed background /
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #aaa;
+      width: 300px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
   </style>
 </head>
 <body>
 
+<!-- Modal HTML -->
+<div id="infoModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <p>This is a random point in the 3D space!</p>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-// Scene, camera, and renderer setup
+// Scene, camera, renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75, window.innerWidth / window.innerHeight, 0.1, 1000
 );
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setClearColor(0xffffff); // White background
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Axes helper (XYZ lines)
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
+// Create black XYZ axes manually
+function createBlackAxes(length) {
+  const material = new THREE.LineBasicMaterial({ color: 0x000000 });
 
-// Function to create a clickable random point
+  const points = [];
+
+  // X Axis
+  points.push(new THREE.Vector3(-length, 0, 0));
+  points.push(new THREE.Vector3(length, 0, 0));
+
+  // Y Axis
+  points.push(new THREE.Vector3(0, -length, 0));
+  points.push(new THREE.Vector3(0, length, 0));
+
+  // Z Axis
+  points.push(new THREE.Vector3(0, 0, -length));
+  points.push(new THREE.Vector3(0, 0, length));
+
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.LineSegments(geometry, material);
+
+  scene.add(line);
+}
+createBlackAxes(5);
+
+// Create a red random point
 function createRandomPoint() {
   const geometry = new THREE.SphereGeometry(0.1, 32, 32);
   const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
   const sphere = new THREE.Mesh(geometry, material);
 
   sphere.position.set(
-    Math.random() * 10 - 5,
+    Math.random() 10 - 5,
     Math.random() * 10 - 5,
     Math.random() * 10 - 5
   );
 
-  sphere.userData = { info: 'This is a random point in the 3D space!' };
+  sphere.userData = { info: 'booop' };
   scene.add(sphere);
   return sphere;
 }
 
-// Create one random point
 const randomPoint = createRandomPoint();
 
-// Raycaster and mouse vector
+// Raycasting
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Handle mouse click
 function onMouseClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -60,16 +128,34 @@ function onMouseClick(event) {
   const intersects = raycaster.intersectObject(randomPoint);
 
   if (intersects.length > 0) {
-    alert(intersects[0].object.userData.info);
+    showModal();
   }
 }
 
 window.addEventListener('click', onMouseClick, false);
 
-// Set camera position
+// Modal controls
+const modal = document.getElementById('infoModal');
+const closeBtn = document.getElementById('closeModal');
+
+function showModal() {
+  modal.style.display = 'block';
+}
+
+closeBtn.onclick = function () {
+  modal.style.display = 'none';
+}
+
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+  }
+}
+
+// Camera position
 camera.position.z = 5;
 
-// Render loop
+// Animation loop
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
