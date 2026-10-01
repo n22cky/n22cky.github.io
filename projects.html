@@ -1,127 +1,74 @@
+---
+title: projects
+---
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="style.css">
-<link rel="shortcut icon" type="image/x-icon" href="images/favicon.png">
-
-<div class="topnav" id="myTopnav">
-  <a href="https://postdigital.space/" class="active">home</a>
-  <a href="cv.html">cv</a>
-  <a href="contact.html">contact</a>
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
-</div>
-
+<meta charset="utf-8">
+<title>projects</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/style.css">
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png">
 <style>
-  section { display: none; }
-  section:target { display: block; }
-  #projects { display: block }
+  body { margin: 3rem 1rem; text-align: center; }
+
+  .menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem clamp(2rem, 8vw, 6rem);
+    margin: 0 0 4rem 0;
+  }
+  .menu a, .menu a:visited, .menu a:hover, .menu a:active,
+  .item a, .item a:visited, .item a:hover, .item a:active {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* the shop grid: as many columns as fit, each item centered */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 3.5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .item { margin: 0; }
+  .item img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;          /* shows the whole work, never crops it */
+    margin-bottom: 0.75rem;
+  }
+  .item figcaption { line-height: 1.5; }
 </style>
 </head>
 <body>
-  
-<section id="projects">
-  <h2>projects</h2>
-  <p>im still editing this pls be patient w me</p>
-  <p><a href="#i_am_not_a_robot">i am not a robot</a><br></br>
-  <a href="#linked">linked</a><br></br>
-  <a href="#qr">QR</a><br></br>
-  <a href="#identification">identification</a><br></br>
-  <a href="#garden_usb">garden usb</a><br></br>
-  <a href="#cable_management_strategy_I">cable management strategy I</a><br></br>
-  <a href="#eventually">eventually</a><br></br>
-  <a href="#BSOD">BSOD</a><br></br>
-  <a href="#click">click</a><br></br>
-  </p>
-</section>
 
-<section id="i_am_not_a_robot">
-  <div>
-    <h2>i am not a robot</h2>
-    <p><em>I am not a robot</em>, March 2025, etching on mirrors</p>
-    <div><img src="/images/Nicky_Hiscox_I-am-not-a-robot_full.jpg" style="width:1050px;height:558px;"></div>
-    <div><img src="/images/Hiscox_Nicky_I am not a robot.jpg" style="width:1050px;height:1050px;"></div>
-    <div><img src="/images/Nicky_Hiscox_I-am-not-a-robot_2025_peace.jpg" style="width:1050px;height:908px;"></div>
-    <p>created for an independent study during a fourth-year drawing course at the MIWSFPA, this project aims to explore the intersecting relationship between cybersecurity and identity. as humans are naturally drawn to their reflection, the viewer is compelled to see themselves through phrases evocative of the human experience which have been distorted to resemble various CAPTCHA techniques.</p>
-  </div>
-</section>
+<nav class="menu">
+  <a href="/">home</a>
+  <a href="/projects.html">projects</a>
+  <a href="/cv.html">cv</a>
+  <a href="/contact.html">contact</a>
+</nav>
 
-<section id="linked">
-  <div>
-    <h2>linked</h2>
-    <p><em>Linked</em>, January 2025, airbrush on puzzle</p>
-    <div><img src="/images/linked.png" style="width:885px;height:678px;"></div>
-    <p>a study on recognition and descriptive URLs.</p>
-  </div>
-</section>
+{% assign items = site.projects | sort: 'date' | reverse %}
+<div class="grid">
+{% for p in items %}
+  {% assign more = p.content | strip %}
+  <figure class="item">
+    {% if more != '' %}
+      <a href="{{ p.url }}"><img src="{{ p.image }}" alt="{{ p.title }}" loading="lazy"></a>
+      <figcaption><a href="{{ p.url }}">{{ p.title }}</a><br>{{ p.medium }}</figcaption>
+    {% else %}
+      <img src="{{ p.image }}" alt="{{ p.title }}" loading="lazy">
+      <figcaption>{{ p.title }}<br>{{ p.medium }}</figcaption>
+    {% endif %}
+  </figure>
+{% endfor %}
+</div>
 
-<section id="qr">
-  <div>
-    <h2>QR</h2>
-    <p><em>QR (Montebello Park)</em>, February 2023, artificial moss on poster board</p>
-    <div><img src="/images/Hiscox_Nicky_QR (Montebello Park).JPG" style="width:1095px;height:1369px;"></div>
-    <p>installed in the Learning Commons (May 2025 - April 2026) of the MIWSFPA in St. Catharines to point students to the nearest green space.</p>
-    <div align="right"><img src="/images/montebello park.JPG" style="width:975px;height:975px;"></div>
-  </div>
-</section>
-
-<section id="identification">
-  <div>
-    <h2>identification</h2>
-    <div><img src="/images/Hiscox_Nicky_Identification.png" style="width:640px;height:640px;"></div>
-    <div><img src="/images/identification.jpg" style="width:378px;height:504px;"></div>
-    <p><em>Identification</em>, June 2025, airbrush on canvas</p>
-  </div>
-</section>
-
-<section id="garden_usb">
-  <div>
-    <h2>garden usb</h2>
-    <p><em>Garden USB</em>, August 2025, concrete</p>
-    <p>keeping your files protected from the elements</p>
-  </div>
-</section>
-
-<section id="eventually">
-  <div>
-    <h2>eventually</h2>
-    <div><img src="/images/Hiscox_Nicky_eventually.JPG" style="width:950px;height:950px;"></div>
-    <p><em>Eventually</em>, July 2025, etching on mirror</p>
-    <p>Loading...</p>
-  </div>
-</section>
-
-<section id="BSOD">
-  <div>
-    <h2>BSOD</h2>
-    <p><em>BSOD</em>, October 2025, acrylic on canvas</p>
-  </div>
-</section>
-
-<section id="click">
-  <div>
-    <h2>click</h2>
-    <div><img src="/images/Hiscox_Nicky_Click.jpg" style="width:512;height:512;"></div>
-    <p><em>click</em>, April 2025, soapstone</p>
-  </div>
-</section>
-
-<section id="cable_management_strategy_I">
-  <div>
-    <h2>cable management strategy I</h2>
-    <div><img src="/images/cable_management_strategy_I.JPG" style="width:771;height:987px;"></div>
-    <p><em>Cable Management Strategy I</em>, 2024, Arduino UNO, soap, wire, ultrasonic sensor, RGB LED, fishing wire and acrylic on canvas</p>
-    <p>a small LED light changes colour based on how close the viewer is to the canvas, detected by an ultrasonic sensor. the wires connecting the tech components travel through and around blocks of soap.<br></br>an exploration of drawing with wire and the ability of wire to function inside of an organic material.</p>
-  </div>
-</section>
-
-<section id="cyclical">
-  <h2>cyclical</h2>
-  <p><em>Cyclical</em>, November 2025, etching on mirrors</p>
-  <p>an exploration in repetitive and contrasting thoughts about perception.</p>
-</section>
-
-<section class="layout">
-  <div class="footer"><a href="https://www.instagram.com/___postdigital/" target="_blank"><br></br><br></br><br></br>:3</a><br></br></div>
-</section>
-
+<script src="/scramble.js"></script>
 </body>
+</html>
