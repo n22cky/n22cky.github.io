@@ -25,3 +25,14 @@
 </section>
 
 <script src="scramble.js"></script>
+<script>
+  var faces = [
+    '=^._.^=', '=^..^=', '=^-.-^=', '=^o.o^=', '=^._.^=',
+    '/\\_/\\', '(=^..^=)', '(o_o)', '(^_^)', ':3', '~(^.^)~', '\\o/'
+  ];
+  var i = 0;
+  setInterval(function () {
+    history.replaceState(null, '', '#' + faces[i]);
+    i = (i + 1) % faces.length;
+  }, 1000);
+</script>
