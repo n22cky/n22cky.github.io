@@ -7,7 +7,7 @@
 
   // Which links get the effect: nav links (but not the hamburger icon)
   // and the "projects" link inside .main. Add more selectors as you like.
-  var SELECTOR = '.topnav a:not(.icon), .main a';
+  var SELECTOR = 'a';
 
   function scramble(el) {
     if (el._busy) return;
