@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <title>{{ page.title }}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{% if page.link %}
+<meta http-equiv="refresh" content="0; url={{ page.link }}">
+<script>location.replace("{{ page.link }}");</script>
+{% endif %}
 <link rel="stylesheet" href="/style.css">
 <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png">
 <style>
