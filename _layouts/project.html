@@ -40,8 +40,7 @@
 </nav>
 
 <main class="detail">
-  <img src="{{ page.image }}" alt="{{ page.title }}">
-  <h1>{{ page.title }}</h1>
+{% unless page.embed %}<img src="{{ page.image }}" alt="{{ page.title }}">{% endunless %}  <h1>{{ page.title }}</h1>
   <p>{{ page.medium }}{% if page.dimensions %}<br>{{ page.dimensions }}{% endif %}</p>
   <div class="text">
     {{ content }}
