@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D graph</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { margin: 8px; background: #fff; color: #000; font-family: "Times New Roman", Times, serif; }
+  a { color: #000; }
+  #stage { position: relative; height: 68vh; min-height: 420px; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  canvas.over { cursor: pointer; }
+
+  #legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+  #legend h3, #note h3 { margin: 0 0 4px; font-size: 1em; }
+  #legend p, #note p { margin: 0; }
+  #note { margin-top: 24px; }
+  @media (max-width: 640px) { #legend { grid-template-columns: 1fr; } }
+
+  #overlay { position: fixed; inset: 0; background: rgba(255,255,255,.7); display: none; align-items: center; justify-content: center; z-index: 10; }
+  #overlay.open { display: flex; }
+  #popup { background: #fff; border: 1px solid #000; max-width: min(480px, 92vw); max-height: 90vh; overflow: auto; padding: 12px; font-family: "Times New Roman", Times, serif; }
+  #popup h2 { margin: 0 0 8px; }
+  #popup button { font-family: "Times New Roman", Times, serif; }
+  #popup table { border-collapse: collapse; margin-bottom: 10px; }
+  #popup td { padding: 0 16px 0 0; }
+  #popup img { display: block; max-width: 100%; margin: 0 0 10px; }
+  #popup p { margin: 0 0 10px; }
+</style>
+</head>
+<body>
+
+<nav class="menu">
+  <a href="/">home</a>
+  <a href="/projects.html">projects</a>
+  <a href="/cv.html">cv</a>
+  <a href="/contact.html">contact</a>
+</nav>
+
+<p style="margin: 4px 0 0;">drag to rotate. click a point.</p>
+
+<div id="stage"><canvas id="c"></canvas></div>
+
+<div id="legend">
+  <div>
+    <h3>Craftsmanship</h3>
+    <p>Technique proficiency; skill application.</p>
+  </div>
+  <div>
+    <h3>Uniqueness</h3>
+    <p>When an object is the first of its kind; has pushed its respective medium forward.</p>
+  </div>
+  <div>
+    <h3>Cultural value</h3>
+    <p>How an object is perceived/valued by one's own culture or society.</p>
+  </div>
+</div>
+
+<div id="note">
+  <h3>Note on external factors, such as subjective perspective and beauty</h3>
+  <p>When rating for an honest assessment, attempt to remove bias and observe the work for objective truth. Be open to changing a rating upon receiving new information. The perceived beauty of an object is not a relevant factor in this framework.</p>
+</div>
+
+<div id="overlay">
+  <div id="popup" role="dialog" aria-modal="true">
+    <h2 id="pTitle"></h2>
+    <table>
+      <tr><td>Craftsmanship</td><td id="pC"></td></tr>
+      <tr><td>Uniqueness</td><td id="pU"></td></tr>
+      <tr><td>Cultural value</td><td id="pV"></td></tr>
+      <tr><td><b>Total score</b></td><td><b id="pTotal"></b></td></tr>
+    </table>
+    <img id="pImg" alt="">
+    <p id="pText"></p>
+    <button id="pClose">close</button>
+  </div>
+</div>
+
+<script>
+/* ============ EDIT THIS SECTION ============ */
+
+// each axis runs from 0 to 10; scores are 1 to 10
+const RANGE = 10;
+const MULTIPLIER = 3.3;   // total score = (craftsmanship + uniqueness + cultural value) x 3.3
+
+// craftsmanship = X axis, uniqueness = Y axis, culturalValue = Z axis
+const POINTS = [
+  { title: "work one",   craftsmanship: 8, uniqueness: 5, culturalValue: 3, text: "Replace this text with whatever you want to say about this work.", image: "" },
+  { title: "work two",   craftsmanship: 4, uniqueness: 9, culturalValue: 6, text: "Another work. Add as many as you like.", image: "" },
+  { title: "work three", craftsmanship: 7, uniqueness: 2, culturalValue: 9, text: "Each point opens its own popup.", image: "" },
+  { title: "work four",  craftsmanship: 3, uniqueness: 4, culturalValue: 2, text: "Text goes here.", image: "" }
+];
+
+/* =========================================== */
+
+const FONT = "'Times New Roman', Times, serif";
+
+function placeholder(label) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300">
+    <rect width="100%" height="100%" fill="#fff" stroke="#000"/>
+    <path d="M0 0L480 300M480 0L0 300" stroke="#000"/>
+    <text x="240" y="155" font-family="Times New Roman, serif" font-size="16" text-anchor="middle" fill="#000" stroke="#fff" stroke-width="6" paint-order="stroke">[ image: ${label} ]</text></svg>`;
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+
+let yaw = -0.6, pitch = 0.45;
+const CAM = 40;
+const C = RANGE / 2;     // rotate around the middle of the cube
+let hits = [];
+
+function resize() {
+  DPR = window.devicePixelRatio || 1;
+  W = canvas.clientWidth; H = canvas.clientHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  draw();
+}
+window.addEventListener("resize", resize);
+
+function project(x, y, z) {
+  x -= C; y -= C; z -= C;
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
+  const x1 = x * cy + z * sy;
+  const z1 = -x * sy + z * cy;
+  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const y2 = y * cp - z1 * sp;
+  const z2 = y * sp + z1 * cp;
+  const k = CAM / (CAM - z2);
+  const S = Math.min(W, H) / (RANGE * 2.4);
+  return { x: W / 2 + x1 * k * S, y: H / 2 - y2 * k * S, d: z2, k };
+}
+
+function line(a, b, width) {
+  const p = project(...a), q = project(...b);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+  ctx.strokeStyle = "#000"; ctx.lineWidth = width;
+  ctx.stroke();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  const R = RANGE;
+
+  // three axes meeting at 90 degrees at the origin
+  line([0, 0, 0], [R, 0, 0], 1.5);
+  line([0, 0, 0], [0, R, 0], 1.5);
+  line([0, 0, 0], [0, 0, R], 1.5);
+
+  const items = [];
+  const labels = [
+    { t: "craftsmanship (1\u201310)", p: project(R, 0, 0) },
+    { t: "uniqueness (1\u201310)",    p: project(0, R, 0) },
+    { t: "cultural value (1\u201310)", p: project(0, 0, R) }
+  ];
+  for (const l of labels) {
+    items.push({ d: l.p.d, fn: () => {
+      ctx.font = `16px ${FONT}`;
+      ctx.fillStyle = "#000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 4; ctx.strokeStyle = "#fff";
+      ctx.strokeText(l.t, l.p.x, l.p.y - 14);
+      ctx.fillText(l.t, l.p.x, l.p.y - 14);
+    }});
+  }
+
+  hits = [];
+  for (const pt of POINTS) {
+    const p = project(pt.craftsmanship, pt.uniqueness, pt.culturalValue);
+    const r = Math.max(6 * p.k, 4);
+    hits.push({ pt, x: p.x, y: p.y, r, d: p.d });
+    items.push({ d: p.d, fn: () => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = "#000"; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+      const t = `(${pt.craftsmanship}, ${pt.uniqueness}, ${pt.culturalValue})`;
+      ctx.font = `13px ${FONT}`;
+      ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      ctx.lineWidth = 4; ctx.strokeStyle = "#fff"; ctx.strokeText(t, p.x + r + 5, p.y);
+      ctx.fillStyle = "#000"; ctx.fillText(t, p.x + r + 5, p.y);
+    }});
+  }
+
+  items.sort((a, b) => a.d - b.d).forEach(i => i.fn());
+}
+
+/* ---------- interaction ---------- */
+let down = null, moved = 0;
+
+canvas.addEventListener("pointerdown", e => {
+  canvas.setPointerCapture(e.pointerId);
+  down = { x: e.clientX, y: e.clientY };
+  moved = 0;
+  canvas.classList.add("dragging");
+});
+
+canvas.addEventListener("pointermove", e => {
+  if (down) {
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    moved += Math.abs(dx) + Math.abs(dy);
+    yaw += dx * 0.01;
+    pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch + dy * 0.01));
+    down = { x: e.clientX, y: e.clientY };
+    draw();
+  } else {
+    canvas.classList.toggle("over", !!pick(e));
+  }
+});
+
+canvas.addEventListener("pointerup", e => {
+  canvas.classList.remove("dragging");
+  if (down && moved < 6) {
+    const h = pick(e);
+    if (h) openPopup(h.pt);
+  }
+  down = null;
+});
+
+function pick(e) {
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  let best = null;
+  for (const h of hits) {
+    if (Math.hypot(mx - h.x, my - h.y) <= h.r + 6 && (!best || h.d > best.d)) best = h;
+  }
+  return best;
+}
+
+/* ---------- popup ---------- */
+const overlay = document.getElementById("overlay");
+function openPopup(pt) {
+  const total = ((pt.craftsmanship + pt.uniqueness + pt.culturalValue) * MULTIPLIER).toFixed(1);
+  document.getElementById("pTitle").textContent = pt.title;
+  document.getElementById("pC").textContent = pt.craftsmanship;
+  document.getElementById("pU").textContent = pt.uniqueness;
+  document.getElementById("pV").textContent = pt.culturalValue;
+  document.getElementById("pTotal").textContent = total;
+  const img = document.getElementById("pImg");
+  img.src = pt.image || placeholder(pt.title);
+  img.alt = pt.title;
+  document.getElementById("pText").textContent = pt.text;
+  overlay.classList.add("open");
+}
+function closePopup() { overlay.classList.remove("open"); }
+document.getElementById("pClose").onclick = closePopup;
+overlay.addEventListener("click", e => { if (e.target === overlay) closePopup(); });
+window.addEventListener("keydown", e => { if (e.key === "Escape") closePopup(); });
+
+resize();
+</script>
+<script src="/scramble.js"></script>
+</body>
+</html>
