@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ page.title }}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/style.css">
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png">
+<style>
+  body { margin: 3rem 1rem; text-align: center; }
+
+  .menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem clamp(2rem, 8vw, 6rem);
+    margin: 0 0 4rem 0;
+  }
+  .menu a, .menu a:visited, .menu a:hover, .menu a:active {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .detail { max-width: 700px; margin: 0 auto; }
+  .detail img { max-width: 100%; height: auto; }
+  .detail .text { text-align: left; }   /* long descriptions read better left-aligned */
+</style>
+</head>
+<body>
+
+<nav class="menu">
+  <a href="/">home</a>
+  <a href="/projects.html">projects</a>
+  <a href="/cv.html">cv</a>
+  <a href="/contact.html">contact</a>
+</nav>
+
+<main class="detail">
+  <img src="{{ page.image }}" alt="{{ page.title }}">
+  <h1>{{ page.title }}</h1>
+  <p>{{ page.medium }}{% if page.dimensions %}<br>{{ page.dimensions }}{% endif %}</p>
+  <div class="text">
+    {{ content }}
+  </div>
+</main>
+
+<script src="/scramble.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Every file in the _projects/ folder becomes one item on the projects page.
+collections:
+  projects:
+    output: true                  # gives each item its own page (used only if it has details)
+    permalink: /projects/:name/
+
+# Every project uses the detail layout automatically (no need to type it in each file).
+defaults:
+  - scope:
+      path: ""
+      type: projects
+    values:
+      layout: project
